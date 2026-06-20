@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParkIQ — Bengaluru Parking Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Leaflet for map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <!-- Leaflet heat plugin -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" defer></script>
+  <!-- App -->
+  <script src="js/data.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <script src="js/allocation.js" defer></script>
+  <script src="js/ai.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-name">ParkIQ</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#overview"   class="nav-link active" data-section="overview">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Overview
+      </a></li>
+      <li><a href="#map"        class="nav-link" data-section="map">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Hotspot Map
+      </a></li>
+      <li><a href="#analytics"  class="nav-link" data-section="analytics">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a></li>
+      <li><a href="#junctions"  class="nav-link" data-section="junctions">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+        Junctions
+      </a></li>
+      <li><a href="#allocation" class="nav-link" data-section="allocation">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Patrol Allocation
+      </a></li>
+      <li><a href="#ai" class="nav-link" data-section="ai">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>
+        AI Intelligence
+      </a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <span>BTP Data · Nov 2023–Apr 2024</span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Overview</div>
+      <div class="topbar-right">
+        <span class="live-badge">● Live Analysis</span>
+      </div>
+    </header>
+
+    <!-- SECTIONS -->
+
+    <!-- OVERVIEW -->
+    <section class="section active" id="section-overview">
+      <div class="section-header">
+        <h1>Parking violation intelligence</h1>
+        <p class="section-sub">Bengaluru Traffic Police · 298,450 violation records · 6-month analysis</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total violations</div>
+          <div class="kpi-value" id="kpi-total">—</div>
+          <div class="kpi-trend">Nov 2023 – Apr 2024</div>
+        </div>
+        <div class="kpi-card accent-blue">
+          <div class="kpi-label">At junctions</div>
+          <div class="kpi-value" id="kpi-junction">—</div>
+          <div class="kpi-trend">Direct congestion risk</div>
+        </div>
+        <div class="kpi-card accent-amber">
+          <div class="kpi-label">Night-time violations</div>
+          <div class="kpi-value" id="kpi-night">—</div>
+          <div class="kpi-trend">8 pm – 6 am window</div>
+        </div>
+        <div class="kpi-card accent-red">
+          <div class="kpi-label">Multi-offense events</div>
+          <div class="kpi-value" id="kpi-multi">—</div>
+          <div class="kpi-trend">Compounded impact</div>
+        </div>
+      </div>
+
+      <div class="insight-strip">
+        <div class="insight-card">
+          <div class="insight-icon">🔴</div>
+          <div>
+            <strong>Night enforcement gap</strong>
+            <p>77% of violations occur between 8 pm and 6 am, yet enforcement is primarily daytime patrol-based. The highest-risk window is 3–5 am.</p>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">📍</div>
+          <div>
+            <strong>Safina Plaza dominates</strong>
+            <p>One junction — Safina Plaza — accounts for 15,449 violations (5.2% of all records). Two dedicated patrol units here outperform six spread evenly.</p>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🛵</div>
+          <div>
+            <strong>Two-wheeler problem</strong>
+            <p>Scooters and motorcycles account for 45.5% of all violations. Fixed CCTV placement should prioritise two-wheeler accessible zones.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-card wide">
+          <div class="chart-card-header">
+            <h3>Violations by hour of day</h3>
+            <span class="chart-badge night">Night peak: 3–5 am</span>
+          </div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="hourChart" role="img" aria-label="Bar chart showing hourly violation counts. Peak between midnight and 6am.">Peak violations between midnight and 6am.</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-row two-col">
+        <div class="chart-card">
+          <div class="chart-card-header"><h3>Violation types</h3></div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="vtypeChart" role="img" aria-label="Doughnut chart of violation types. Wrong parking 55%, no parking 37%.">Wrong parking 55%, No parking 37%, Main road 8%.</canvas>
+          </div>
+          <div class="legend" id="vtypeLegend"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><h3>Vehicle type breakdown</h3></div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="vehChart" role="img" aria-label="Horizontal bar chart showing scooter leads vehicle type violations.">Scooter 32%, Car 30%, Auto 13%, Motorcycle 14%.</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-row two-col">
+        <div class="chart-card">
+          <div class="chart-card-header"><h3>Monthly trend</h3></div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="monthChart" role="img" aria-label="Line chart of monthly violation counts Nov to Apr.">Violations sustained between 44,000 and 65,000 per month.</canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><h3>Day of week</h3></div>
+          <div class="chart-wrap" style="height:180px">
+            <canvas id="dowChart" role="img" aria-label="Bar chart of violations by day of week. Weekends slightly higher.">Violations spread relatively evenly across days.</canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section class="section" id="section-map">
+      <div class="section-header">
+        <h1>Violation hotspot map</h1>
+        <p class="section-sub">Heatmap of all junction violations + sampled non-junction incidents</p>
+      </div>
+      <div class="map-controls">
+        <label class="map-ctrl-label">View mode</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="btnHeat">Heatmap</button>
+          <button class="toggle-btn" id="btnDots">Dot map</button>
+        </div>
+        <label class="map-ctrl-label" style="margin-left:16px">Filter by hour</label>
+        <select id="hourFilter" class="select-ctrl">
+          <option value="all">All hours</option>
+          <option value="night">Night (8pm–6am)</option>
+          <option value="day">Day (6am–8pm)</option>
+          <option value="peak">Rush (7–9am, 6–9pm)</option>
+        </select>
+      </div>
+      <div id="map" style="height:520px;border-radius:12px;overflow:hidden;margin-top:12px"></div>
+      <div class="map-legend">
+        <span class="map-legend-item"><span class="dot red"></span>High impact junction</span>
+        <span class="map-legend-item"><span class="dot amber"></span>Medium junction</span>
+        <span class="map-legend-item"><span class="dot blue"></span>Non-junction</span>
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section class="section" id="section-analytics">
+      <div class="section-header">
+        <h1>Deep analytics</h1>
+        <p class="section-sub">Station-level breakdown and enforcement zone analysis</p>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card wide">
+          <div class="chart-card-header"><h3>Top 12 police stations by violation volume</h3></div>
+          <div class="chart-wrap" style="height:340px">
+            <canvas id="stnChart" role="img" aria-label="Horizontal bar chart of violations per police station. Upparpet leads.">Upparpet 34,468 violations leads, followed by Shivajinagar 28,044.</canvas>
+          </div>
+        </div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card wide">
+          <div class="chart-card-header">
+            <h3>Hourly pattern by top station</h3>
+            <select id="stationSelect" class="select-ctrl-sm"></select>
+          </div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="stationHourChart" role="img" aria-label="Hourly violation pattern for selected station.">Station-level hourly breakdown.</canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JUNCTIONS -->
+    <section class="section" id="section-junctions">
+      <div class="section-header">
+        <h1>Junction impact ranking</h1>
+        <p class="section-sub">Impact score = violations × 1.5 + junction weight × 2 + multi-offense penalty</p>
+      </div>
+      <div class="table-controls">
+        <input type="text" id="junctionSearch" class="search-input" placeholder="Search junction…" />
+        <div class="sort-group">
+          <span class="sort-label">Sort by</span>
+          <button class="sort-btn active" data-sort="impact">Impact</button>
+          <button class="sort-btn" data-sort="count">Violations</button>
+          <button class="sort-btn" data-sort="peak">Peak hour</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="junctionTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Junction</th>
+              <th>Violations</th>
+              <th>Impact score</th>
+              <th>Peak hour</th>
+              <th>Top vehicle</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="junctionTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ALLOCATION -->
+    <section class="section" id="section-allocation">
+      <div class="section-header">
+        <h1>Patrol allocation model</h1>
+        <p class="section-sub">Greedy impact-maximisation: given N units, find the optimal zone-hour deployment</p>
+      </div>
+      <div class="alloc-controls">
+        <div class="alloc-ctrl-group">
+          <label>Patrol units available</label>
+          <div class="slider-row">
+            <input type="range" id="unitSlider" min="1" max="15" value="6" step="1" />
+            <span class="slider-val" id="unitVal">6</span>
+          </div>
+        </div>
+        <div class="alloc-ctrl-group">
+          <label>Shift focus</label>
+          <select id="shiftSelect" class="select-ctrl">
+            <option value="all">All shifts</option>
+            <option value="night">Night shift (8pm–6am)</option>
+            <option value="day">Day shift (6am–8pm)</option>
+          </select>
+        </div>
+      </div>
+      <div class="alloc-summary" id="allocSummary"></div>
+      <div class="alloc-list" id="allocList"></div>
+      <div class="chart-card" style="margin-top:24px">
+        <div class="chart-card-header"><h3>Coverage vs. units deployed</h3></div>
+        <div class="chart-wrap" style="height:200px">
+          <canvas id="coverageChart" role="img" aria-label="Line chart showing diminishing returns as more patrol units are added.">Coverage curve showing diminishing returns after 6-8 units.</canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI INTELLIGENCE -->
+    <section class="section" id="section-ai">
+      <div class="section-header">
+        <h1>AI intelligence</h1>
+        <p class="section-sub">K-Means clustering auto-discovers enforcement zones · Simulated live violation feed</p>
+      </div>
+
+      <!-- K-MEANS -->
+      <div class="ai-block">
+        <div class="ai-block-header">
+          <div>
+            <h2 class="ai-block-title">K-Means cluster analysis <span class="ai-tag">K=8 · scikit-learn</span></h2>
+            <p class="ai-block-sub">Algorithm automatically discovered 8 spatial enforcement zones from 298,450 records using lat, lon, hour, and impact score as features. No manual zone drawing.</p>
+          </div>
+          <button class="btn-primary" id="btnShowClusters" onclick="toggleClusters()">Show on map</button>
+        </div>
+        <div id="clusterCards" class="cluster-grid"></div>
+      </div>
+
+      <!-- CLUSTER MAP -->
+      <div class="ai-block" style="margin-top:20px">
+        <div class="ai-block-header">
+          <h2 class="ai-block-title">Cluster map</h2>
+          <span id="clusterMapNote" class="note-text">Click "Show on map" above to overlay clusters</span>
+        </div>
+        <div id="aiMap" style="height:400px;border-radius:12px;overflow:hidden"></div>
+      </div>
+
+      <!-- LIVE FEED -->
+      <div class="ai-block" style="margin-top:28px">
+        <div class="ai-block-header">
+          <div>
+            <h2 class="ai-block-title">
+              Live violation feed
+              <span id="liveFeedStatus" style="font-size:13px;font-weight:500;color:#4E5A6B;margin-left:10px">○ STOPPED</span>
+            </h2>
+            <p class="ai-block-sub">Replays historical violations as a real-time stream. In production, this connects to BTP's CCTV → CV pipeline.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn-primary" id="btnStartFeed">▶ Start feed</button>
+            <button class="btn-ghost"   id="btnStopFeed" disabled>■ Pause</button>
+          </div>
+        </div>
+
+        <!-- Live counters -->
+        <div class="live-counters">
+          <div class="live-counter">
+            <div class="lc-label">Violations detected</div>
+            <div class="lc-val" id="liveCount">0</div>
+          </div>
+          <div class="live-counter">
+            <div class="lc-label">Cumulative impact</div>
+            <div class="lc-val" id="liveImpact">0</div>
+          </div>
+          <div class="live-counter">
+            <div class="lc-label">Impact trend</div>
+            <canvas id="liveSparkline" width="160" height="44" style="display:block"></canvas>
+          </div>
+        </div>
+
+        <!-- Feed table -->
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Violation type</th>
+                <th>Vehicle</th>
+                <th>Location</th>
+                <th>Station</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody id="liveFeedTbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px">Press ▶ Start feed to begin simulation</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Model explainer -->
+      <div class="ai-block" style="margin-top:28px">
+        <h2 class="ai-block-title">How the AI works</h2>
+        <div class="explainer-grid">
+          <div class="explainer-step">
+            <div class="step-num">01</div>
+            <div class="step-title">Feature extraction</div>
+            <div class="step-body">Each violation record is encoded as [latitude, longitude, hour, impact_score]. StandardScaler normalises all four dimensions before clustering.</div>
+          </div>
+          <div class="explainer-step">
+            <div class="step-num">02</div>
+            <div class="step-title">K-Means clustering</div>
+            <div class="step-body">scikit-learn KMeans (K=8, n_init=10) groups violations into 8 spatiotemporal zones. K was chosen by elbow method on inertia vs. cluster count.</div>
+          </div>
+          <div class="explainer-step">
+            <div class="step-num">03</div>
+            <div class="step-title">Risk scoring</div>
+            <div class="step-body">Each cluster is scored by total impact (sum of violation × junction weights). Clusters ranked Critical → Low based on proportional impact share.</div>
+          </div>
+          <div class="explainer-step">
+            <div class="step-num">04</div>
+            <div class="step-title">Production path</div>
+            <div class="step-body">Live CCTV frames → YOLOv8 detects illegal parking → classified violation written to DB → cluster model updates enforcement zones in near real-time.</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
