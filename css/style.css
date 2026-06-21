@@ -156,6 +156,24 @@ body {
 }
 .menu-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
 .topbar-title { font-size: 15px; font-weight: 600; flex: 1; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-back-btn {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: var(--font);
+}
+.topbar-back-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
 .live-badge {
   font-size: 11px;
   color: var(--green);

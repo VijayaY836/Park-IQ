@@ -140,6 +140,15 @@ function setHourFilter(filter) {
   renderMapMode();
 }
 
+/* ---- Reset (called on "back") ---- */
+function resetMap() {
+  if (_heatLayer && _map) try { _map.removeLayer(_heatLayer); } catch(_) {}
+  if (_dotLayer  && _map) try { _map.removeLayer(_dotLayer);  } catch(_) {}
+  if (_map) try { _map.remove(); } catch(_) {}
+  _map = null; _heatLayer = null; _dotLayer = null;
+  _mapMode = 'heat'; _hourFilter = 'all';
+}
+
 /* ---- Controls wiring (called from app.js after DOM ready) ---- */
 function wireMapControls() {
   document.getElementById('btnHeat').addEventListener('click', () => {

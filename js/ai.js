@@ -317,6 +317,18 @@ function flashMapDot(lat, lon, urgency) {
   }, 1400);
 }
 
+/* ---- Reset (called on "back") ---- */
+function resetAI() {
+  stopLiveFeed();
+  if (_clusterLayer && _clusterMapRef) try { _clusterMapRef.removeLayer(_clusterLayer); } catch(_) {}
+  if (_clusterMapRef) try { _clusterMapRef.remove(); } catch(_) {}
+  _clusterMapRef = null; _clusterLayer = null; _clustersVisible = false;
+  if (_flashMarker && _clusterMapRef) try { _clusterMapRef.removeLayer(_flashMarker); } catch(_) {}
+  _flashMarker = null;
+  _liveCount = 0; _liveTotal = 0; _liveFeedIndex = 0;
+  _liveLogEntries = []; _sparkValues = [];
+}
+
 /* ---- Wire live feed buttons — called after DOM is ready ---- */
 function wireLiveFeedControls() {
   /* Use event delegation on document so it works even if section
