@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="css/style.css" />
   <!-- Leaflet for map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- PapaParse for CSV upload -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
   <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
   <!-- Leaflet -->
@@ -22,9 +24,61 @@
   <script src="js/map.js" defer></script>
   <script src="js/allocation.js" defer></script>
   <script src="js/ai.js" defer></script>
+  <script src="js/ingest.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
 <body>
+
+  <!-- DATA SOURCE OVERLAY -->
+  <div id="dataOverlay" class="ds-overlay">
+    <div class="ds-card">
+      <div class="ds-brand">
+        <span style="font-size:26px;line-height:1">⬡</span>
+        <span class="ds-brand-name">ParkIQ</span>
+      </div>
+      <h1 class="ds-title">Bengaluru Parking Intelligence</h1>
+      <p class="ds-sub">Choose a data source to get started</p>
+
+      <div class="ds-options">
+
+        <!-- Option A: default data -->
+        <div class="ds-option">
+          <div class="ds-option-left">
+            <div class="ds-option-label">Use default dataset</div>
+            <div class="ds-option-meta">BTP · 298,450 records · Nov 2023 – Apr 2024 · pre-processed with AI clusters</div>
+          </div>
+          <button class="btn-primary" id="btnUseDefault">Load →</button>
+        </div>
+
+        <div class="ds-divider"><span>or</span></div>
+
+        <!-- Option B: upload CSV -->
+        <div class="ds-option">
+          <div class="ds-option-left">
+            <div class="ds-option-label">Upload your own CSV</div>
+            <div class="ds-option-meta">Same column format as BTP dataset — fully processed in-browser, K-Means included</div>
+          </div>
+          <label class="btn-ghost ds-browse-label" for="csvFileInput">Browse</label>
+          <input type="file" id="csvFileInput" accept=".csv" />
+        </div>
+
+        <!-- File ready row (shown after file selected) -->
+        <div id="dsUploadReady" class="ds-upload-ready" style="display:none">
+          <span id="dsFileName" class="ds-file-name"></span>
+          <button class="btn-primary" id="btnProcessCSV">Process &amp; Load →</button>
+        </div>
+
+      </div>
+
+      <!-- Status message -->
+      <div id="dsStatus" class="ds-status" style="display:none"></div>
+
+      <!-- Column format hint -->
+      <div class="ds-format-note">
+        Expected CSV columns: <code>created_datetime · violation_type · junction_name · latitude · longitude · vehicle_type · police_station</code>
+      </div>
+    </div>
+  </div>
 
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">

@@ -15,24 +15,25 @@ const DATA = {
   live_pool: null,
 };
 
+function populateData(json) {
+  DATA.kpis      = json.kpis;
+  DATA.hourly    = json.hourly;
+  DATA.vtypes    = json.vtypes;
+  DATA.vehicles  = json.vehicles;
+  DATA.monthly   = json.monthly;
+  DATA.stations  = json.stations;
+  DATA.junctions = json.junctions;
+  DATA.mapPoints = json.map_points;
+  DATA.dow       = json.dow;
+  DATA.clusters  = json.clusters  || [];
+  DATA.live_pool = json.live_pool || [];
+}
+
 async function loadData() {
   try {
     const res = await fetch('data/violations.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-
-    DATA.kpis      = json.kpis;
-    DATA.hourly    = json.hourly;
-    DATA.vtypes    = json.vtypes;
-    DATA.vehicles  = json.vehicles;
-    DATA.monthly   = json.monthly;
-    DATA.stations  = json.stations;
-    DATA.junctions = json.junctions;
-    DATA.mapPoints = json.map_points;
-    DATA.dow       = json.dow;
-    DATA.clusters  = json.clusters  || [];
-    DATA.live_pool = json.live_pool || [];
-
+    populateData(await res.json());
     return true;
   } catch (err) {
     console.error('Failed to load data:', err);

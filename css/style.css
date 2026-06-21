@@ -842,3 +842,172 @@ input[type=range] {
   .explainer-grid { grid-template-columns: 1fr; }
   .live-counters { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+
+/* ============================================================
+   DATA SOURCE OVERLAY
+   ============================================================ */
+.ds-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 24px;
+  transition: opacity 0.35s ease;
+}
+.ds-overlay.ds-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ds-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 44px 48px;
+  max-width: 620px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.ds-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.ds-brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+}
+
+.ds-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.ds-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.ds-options { display: flex; flex-direction: column; gap: 0; }
+
+.ds-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ds-option:hover {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-dim);
+}
+
+.ds-option-left { flex: 1; min-width: 0; }
+.ds-option-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+.ds-option-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.ds-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.ds-divider::before, .ds-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.ds-browse-label {
+  cursor: pointer;
+  white-space: nowrap;
+}
+#csvFileInput { display: none; }
+
+.ds-upload-ready {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--blue-dim);
+  border: 1px solid rgba(37,99,235,0.2);
+  border-radius: var(--radius);
+}
+.ds-file-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--blue);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-status {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.ds-status.loading {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid rgba(37,99,235,0.2);
+}
+.ds-status.error {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(220,38,38,0.2);
+}
+
+.ds-format-note {
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.ds-format-note code {
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 10.5px;
+  background: var(--bg-elevated);
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .ds-card { padding: 28px 20px; }
+  .ds-title { font-size: 20px; }
+  .ds-option { flex-wrap: wrap; }
+}
